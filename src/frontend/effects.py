@@ -52,3 +52,40 @@ def grayscale(im, arg=None):
     return im.convert("L")
 
 print(effect_image("1.jpg", lomography))
+
+# Color Inversion
+def colorinv(im, arg=None):
+	nim = Image.new(im.mode, im.size)
+	width, height = im.size
+	
+	for x in range(width):
+		for y in range(height):
+			p = im.getpixel((x,y))
+			r = 255-p[0]
+			g = 255-p[1]
+			b = 255-p[2]
+			nim.putpixel((x,y), (r,g,b))
+	return nim
+
+# Channel Removal
+##################### Arg should re,gr,bl be 0 or 1
+def channelrem(im, re,gr,bl ):
+	nim = Image.new(im.mode, im.size)
+	width, height = im.size
+	
+	for x in range(width):
+		for y in range(height):
+			p = im.getpixel((x,y))
+			r = p[0]*re
+			g = p[1]*gr
+			b = p[2]*bl
+			nim.putpixel((x,y), (r,g,b))
+	return nim
+	
+# JPEGify
+
+def jpegify(im, qual ):	
+
+	im.save(rem_ext(file_name)+".jpg" % i, quality=qual)
+
+		
