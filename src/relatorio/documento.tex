@@ -1,0 +1,153 @@
+\documentclass{report}
+\usepackage[T1]{fontenc} 
+\usepackage[utf8]{inputenc} 
+\usepackage[backend=biber, style=ieee]{biblatex} 
+\usepackage{csquotes}
+\usepackage[portuguese]{babel}
+\usepackage{blindtext}
+\usepackage[printonlyused]{acronym}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{color}
+
+
+\begin{document}
+%
+% Settings
+%
+\def\titulo{Proj2}
+\def\data{12-06-2017}
+\def\autores{Mário Liberato, Jorge Oliveira}
+\def\autorescontactos{(84917) mliberato@ua.pt, (84983) jorge.am.oliveira@ua.pt}
+\def\departamento{DETI}
+\def\curso{MIECT}
+\def\logotipo{ua.pdf}
+%
+%CAPA %
+%
+\begin{titlepage}
+
+\begin{center}
+%
+\vspace*{50mm}
+%
+{\Huge \titulo}\\ 
+%
+\vspace{10mm}
+%
+{\Large \curso}\\
+%
+\vspace{10mm}
+%
+{\LARGE \autores}\\ 
+%
+\vspace{30mm}
+%
+\begin{figure}[h]
+\center
+\includegraphics{\logotipo}
+\end{figure}
+%
+\vspace{30mm}
+\end{center}
+%
+\end{titlepage}
+
+% Pag Titulo %
+\title{%
+{\Huge\textbf{\titulo}}\\
+{\Large \departamento\\ \curso}
+}
+%
+\author{%
+    \autores \\
+    \autorescontactos
+}
+%
+\date{\data}
+%
+\maketitle
+
+\pagenumbering{roman}
+
+%RESUMO%
+\begin{abstract}
+
+\end{abstract}
+
+% Agradecimentos %
+%\renewcommand{\abstractname}{Agradecimentos}
+%\begin{abstract}
+%\end{abstract}
+%Não existem agradecimentos para este relatório
+
+\tableofcontents
+% \listoftables     
+% \listoffigures    
+
+
+%
+\clearpage
+\pagenumbering{arabic} %Numeracao fica a direita
+%
+\chapter{Introdução}
+\label{chap.introducao} 
+
+\chapter{Metodologia}
+\label{chap.metodologia}
+
+\section{Testes}
+
+
+\chapter{Descrição da aplicação}
+\label{chap.desc}
+
+\section{Página Web}
+
+
+\subsection{Página Inicial}
+
+
+\subsection{Submissão de Imagem}
+
+
+\subsection{Galeria}
+
+\section{Núcleo da Aplicação}
+
+\subsection{Efeitos}
+
+\subsection{Gerador de Memes}
+
+\subsection{Utilização de API}
+
+\subsection{Persistência}
+
+\subsection{Autenticação}
+
+\chapter{Resultados e Análise}
+\label{chap.res}
+
+\section{Página Web}
+
+\section{Núcleo}
+
+
+\chapter{Conclusões}
+\label{chap.conc}
+
+
+
+\chapter*{Acrónimos}
+\begin{acronym}
+ \acro{ua}[UA]{Universidade de Aveiro}
+ \acro{deti}[DETI]{Departamento de Electrónica, Telecomunicações e Informática}
+ \acro{miect}[MIECT]{Mestrado Integrado em Engenharia de Computadores e Telemática}
+
+\end{acronym}
+
+
+%
+%\printbibliography
+
+\end{document}
