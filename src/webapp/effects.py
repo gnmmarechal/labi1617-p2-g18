@@ -1,4 +1,5 @@
 from PIL import Image
+from PIL import ImageFilter
 from misc_module import remove_extension as rem_ext
 
 
@@ -13,6 +14,9 @@ def effect_image(file_name, effect_name, args=None):
 
 
 # Lomography Effect
+def blur(im, arg=None):
+    return im.filter(ImageFilter.BLUR)
+
 def lomography(im, arg=None):
     nim = Image.new(im.mode, im.size)
     width, height = im.size
@@ -51,8 +55,6 @@ def sepia(im, arg=None):
 def grayscale(im, arg=None):
     return im.convert("L")
 
-print(effect_image("1.jpg", lomography))
-
 # Color Inversion
 def colorinv(im, arg=None):
 	nim = Image.new(im.mode, im.size)
@@ -67,25 +69,3 @@ def colorinv(im, arg=None):
 			nim.putpixel((x,y), (r,g,b))
 	return nim
 
-# Channel Removal
-##################### Arg should re,gr,bl be 0 or 1
-def channelrem(im, re,gr,bl ):
-	nim = Image.new(im.mode, im.size)
-	width, height = im.size
-	
-	for x in range(width):
-		for y in range(height):
-			p = im.getpixel((x,y))
-			r = p[0]*re
-			g = p[1]*gr
-			b = p[2]*bl
-			nim.putpixel((x,y), (r,g,b))
-	return nim
-	
-# JPEGify
-
-def jpegify(im, qual ):	
-
-	im.save(rem_ext(file_name)+".jpg" % i, quality=qual)
-
-		
