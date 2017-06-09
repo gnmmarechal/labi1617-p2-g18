@@ -9,46 +9,47 @@ def meme_image(file_name, effect_name, args=None):
         im = effect_name(Image.open(file_name), args)
         im.save(rem_ext(file_name)+".png")
         return 0
-    except Exception:
+    except Exception: # Returns -1 if an exception is thrown. This is done to avoid any crashes.
         return -1
 
 
-def addtext(im, args):
-
-    # Args are not being used... Only args[0]...
-    # Only drawing 1 letter
-
-    outline = args[2]
-    text = args[0].upper()
-    textup = args[1].upper()
+def add_text(im, args):
+    if len(args) != 3 and len(args) != 2:
+        raise Exception("Wrong argument length")
+    outline = args[0]
+    text = args[1].upper()
+    text_up = ""
+    if len(args) == 3:
+        text_up = args[2].upper()
     draw = ImageDraw.Draw(im)
-    font = ImageFont.truetype("impact.ttf",40)
+    font = ImageFont.truetype("impact.ttf", 40)
     w, h = draw.textsize(text, font=font)
     iw, ih = im.size
 
     # Bottom Text
     if outline:
-        draw.text(((iw-w)/2-1,ih*0.8-1), text, (0,0,0), font=font)
-        draw.text(((iw-w)/2+1,ih*0.8-1), text, (0,0,0), font=font)
-        draw.text(((iw-w)/2-1,ih*0.8+1), text, (0,0,0), font=font)
-        draw.text(((iw-w)/2+1,ih*0.8+1), text, (0,0,0), font=font)
+        draw.text(((iw-w)/2-1, ih*0.8-1), text, (0, 0, 0), font=font)
+        draw.text(((iw-w)/2+1, ih*0.8-1), text, (0, 0, 0), font=font)
+        draw.text(((iw-w)/2-1, ih*0.8+1), text, (0, 0, 0), font=font)
+        draw.text(((iw-w)/2+1, ih*0.8+1), text, (0, 0, 0), font=font)
 
-    draw.text(((iw-w)/2,ih*0.8), text, (255,255,255), font=font)
+    draw.text(((iw-w)/2, ih*0.8), text, (255, 255, 255), font=font)
 
     # Top Text
-    if outline:
-        draw.text(((iw-w)/2-1,ih*0.05-1), textup, (0,0,0), font=font)
-        draw.text(((iw-w)/2+1,ih*0.05-1), textup, (0,0,0), font=font)
-        draw.text(((iw-w)/2-1,ih*0.05+1), textup, (0,0,0), font=font)
-        draw.text(((iw-w)/2+1,ih*0.05+1), textup, (0,0,0), font=font)
+    if len(args) == 3:
+        if outline:
+            draw.text(((iw-w)/2-1, ih*0.05-1), text_up, (0, 0, 0), font=font)
+            draw.text(((iw-w)/2+1, ih*0.05-1), text_up, (0, 0, 0), font=font)
+            draw.text(((iw-w)/2-1, ih*0.05+1), text_up, (0, 0, 0), font=font)
+            draw.text(((iw-w)/2+1, ih*0.05+1), text_up, (0, 0, 0), font=font)
 
-    draw.text(((iw-w)/2,ih*0.05), textup, (255,255,255), font=font)
+        draw.text(((iw-w)/2, ih*0.05), text_up, (255, 255, 255), font=font)
 
     return im
 
 
 # Black and White -> Sepia from effects.py
-def bandw(im):
+def black_and_white(im):
     nim = Image.new(im.mode, im.size)
     width, height = im.size
 
@@ -64,8 +65,9 @@ def bandw(im):
             nim.putpixel((x, y), (nr, ng, nb))
     return nim
 
-#Cut background
-def rmvbackground(im):
+
+# Cut background
+def remove_background(im):
 
     im = im.convert("RGBA")
 
