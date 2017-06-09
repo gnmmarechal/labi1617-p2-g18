@@ -65,9 +65,24 @@ def bandw(im):
 #Cut background
 def rmvbackground(im):
 	
+	im = im.convert("RGBA")
+	
+	pixdata = im.load()
+	
+	width, height = im.size
+	
+	for x in range(width):
+		for y in range(height):
+			if pixdata[x, y] == (123,123,123,255): #123 -> Valor em que os pixeis mudam
+				pixdata[x, y] = (123,123,123,0)
+	
+	return im
 	
 #Apply another background
 def applybackground(im,args):
 	
 	
-	
+				
+	return im
+
+#Help pls
