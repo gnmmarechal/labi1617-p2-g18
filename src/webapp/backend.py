@@ -5,9 +5,11 @@ import sqlite3 as sql
 import time
 from PIL import Image
 import effects
+from effects import *
 from meme import *
 import os
 from misc_module import remove_extension as rem_ext
+
 
 class This(object):
     port = 10018  # The port the application is to use
@@ -17,7 +19,20 @@ class This(object):
     class Database(object):
         path = "proj2.db"
 
+# Dict with the this app's configuration:
+
 cherrypy.config.update({"server.socket_port": This.port, })
+cherrypy.config.update({"tools.staticdir.root" : True, "tools.staticdir.root" : os.getcwd(),})
+baseDir = os.path.dirname(os.path.abspath(__file__))
+config = {
+  "/":     { "tools.staticdir.root": baseDir },
+  "/js":   { "tools.staticdir.on": True,
+             "tools.staticdir.dir": "js" },
+  "/css":  { "tools.staticdir.on": True,
+             "tools.staticdir.dir": "css" },
+  "/html": { "tools.staticdir.on": True,
+             "tools.staticdir.dir": "html" },
+}
 
 
 class AppAPI(object):
@@ -25,9 +40,11 @@ class AppAPI(object):
         pass
 
     def get_username(self):
-        return cherrypy.request.headers.get("X-Remote-User")
+        if This.xcoa:
+            return cherrypy.request.headers.get("X-Remote-User")
+        return "test"
 
-    def create_img_id(self):
+    def get_img_id(self):
         return "test"
 
     def db(self, database_path, sql_commands):
@@ -46,6 +63,15 @@ class AppAPI(object):
         if This.debug:
             cherrypy.engine.exit()
             return "Killed server."
+        else:
+            return "Not in debug mode."
+
+    @cherrypy.expose
+    def clean(self):
+        if This.debug:
+            os.remove("proj2.db")
+
+            return "Cleaned"
         else:
             return "Not in debug mode."
 
@@ -89,10 +115,11 @@ class AppAPI(object):
 
     @cherrypy.expose
     def put(self, image, type, args):  # args --> effect!,!text!,!textup por exemplo
+
         if not type == "MEME" and type == "EFFECT" and type == "PHOTO":
             return -1
-        image_id = create_img_id()
-        author = get_username()
+        image_id = self.get_img_id()
+        author = self.get_username()
         timestamp = time.time()
         fo = open("temp/" + image.filename, "wb")
         while True:
@@ -101,20 +128,23 @@ class AppAPI(object):
                 break
             fo.write(data)
         fo.close()
+        #method = getattr(effects, args)
+        #res = effects.effect_image("temp/" + image.filename, method)
+        #return
         im = Image.open("temp/" + image.filename)
         im.save("uploads/" + image_id + ".png")
         os.remove("temp/" + image.filename)
 
-        db(This.Database.path, "CREATE TABLE IF NOT EXISTS images (id TEXT, type TEXT, author TEXT, timestamp INTEGER, upvotes INTEGER, downvotes INTEGER")
-        db(This.Database.path, "INSERT INTO images VALUES (" + image_id + ", " + type + ", " + author + ", " + timestamp + ")")
+        #self.db(This.Database.path, "CREATE TABLE IF NOT EXISTS images (id TEXT, type TEXT, author TEXT, timestamp INTEGER, upvotes INTEGER, downvotes INTEGER")
+        #self.db(This.Database.path, "INSERT INTO images VALUES (" + str(image_id) + ", " + str(type) + ", " + str(author) + ", " + str(timestamp) + ")")
         arg_complete = args.split("&,&")
         for arg in arg_complete:
             am = arg.split("!,!")
             ef_name = am[0]
             if type == "EFFECT":
                 method = getattr(effects, ef_name)
-                res = effects.effect_image("temp/" + image_id + ".png", method)
-            return 0
+                effects.effect_image("uploads/" + str(image_id) + ".png", method)
+
 
 
 class Root(object):
@@ -122,7 +152,8 @@ class Root(object):
 
     @cherrypy.expose
     def index(self):
-        return "<HTML html> <HEAD><TITLE>P2 Labi</TITLE></HEAD><BODY><H1>Hello World</H1></BODY></HTML>"
+        # return "<HTML html> <HEAD><TITLE>P2 Labi</TITLE></HEAD><BODY><H1>Hello World</H1></BODY></HTML>"
+        return open("html/index.html").read()
 
 
-cherrypy.quickstart(Root())
+cherrypy.quickstart(Root(), "/", config)

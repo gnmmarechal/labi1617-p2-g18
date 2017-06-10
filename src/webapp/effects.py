@@ -4,9 +4,9 @@ from misc_module import remove_extension as rem_ext
 
 
 # Modify an image with the selected effect
-def effect_image(file_name, effect_name, args=None):
+def effect_image(file_name, effect_name):
     try:
-        im = effect_name(Image.open(file_name), args)
+        im = effect_name(Image.open(file_name))
         im.save(rem_ext(file_name)+".png")
         return 0
     except Exception as e:
@@ -15,12 +15,12 @@ def effect_image(file_name, effect_name, args=None):
 
 
 # Blur effect
-def blur(im, arg=None):
+def blur(im):
     return im.filter(ImageFilter.BLUR)
 
 
 # Lomography Effect
-def lomography(im, arg=None):
+def lomography(im):
     nim = Image.new(im.mode, im.size)
     width, height = im.size
     for x in range(width):
@@ -37,7 +37,7 @@ def lomography(im, arg=None):
 
 
 # Sepia Effect
-def sepia(im, arg=None):
+def sepia(im):
     nim = Image.new(im.mode, im.size)
     width, height = im.size
 
@@ -55,7 +55,7 @@ def sepia(im, arg=None):
 
 
 # Grayscale Effect
-def grayscale(im, arg=None):
+def grayscale(im):
     return im.convert("L")
 
 
