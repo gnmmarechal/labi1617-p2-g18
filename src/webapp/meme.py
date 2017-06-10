@@ -5,14 +5,12 @@ from misc_module import remove_extension as rem_ext
 
 #outline está sempre true
 
-
 def meme_image(file_name, effect_name, args=None):
     try:
         im = effect_name(Image.open(file_name), args)
         im.save(rem_ext(file_name)+".png")
         return 0
-    except Exception as e: # Returns -1 if an exception is thrown. This is done to avoid any crashes.
-        print("ERROR: " + str(e))
+    except Exception: # Returns -1 if an exception is thrown. This is done to avoid any crashes.
         return -1
 
 
@@ -100,4 +98,29 @@ def dobg():
 	draw.polygon([(320,480), (640,480), (320,240)], fill = (255,0,255))
 	
 	
-	im.save("out.png")
+	im.save("color.png")
+	
+def dobg2():
+	
+	im = Image.new("RGB", (640, 480), (255, 255, 255))
+	
+	draw = ImageDraw.Draw(im)
+	#320,240
+	draw.polygon([(0,0),(0,480),(640,480),(640,0)], fill = (255,0,150))
+	draw.ellipse((-40,-120, 680, 600), fill = (255,0,255), outline ='black')
+	draw.ellipse((-20,-100, 660, 580), fill = (150,0,255), outline ='black')
+	draw.ellipse((0,-80, 640, 560), fill = (0,0,255), outline ='black')
+	draw.ellipse((20,-60, 620, 540), fill = (0,150,255), outline ='black')
+	draw.ellipse((40,-40, 600, 520), fill = (0,255,255), outline ='black')
+	draw.ellipse((60,-20, 580, 500), fill = (0,255,150), outline ='black')
+	draw.ellipse((80,0, 560, 480), fill = (0,255,0), outline ='black')
+	draw.ellipse((100,20, 540, 460), fill = (150,255,0), outline ='black')
+	draw.ellipse((120,40, 520, 440), fill = (255,255,0), outline ='black')
+	draw.ellipse((140,60, 500, 420), fill = (255,150,0), outline ='black')
+	draw.ellipse((160,80, 480, 400), fill = (255,0,0), outline ='black')
+	draw.ellipse((180,100, 460, 380), fill = (150,0,0), outline ='black')
+	draw.ellipse((200,120, 440, 360), fill = 'white', outline ='black')
+	draw.ellipse((240,160, 400, 320), fill = 'gray', outline ='black')
+	draw.ellipse((280,200, 360, 280), fill = 'black', outline ='white')
+	
+	im.save("circle.png")
