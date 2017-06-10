@@ -1,8 +1,9 @@
-from PIL import Image
-from PIL import ImageDraw
-from PIL import ImageFont
+#Coded on Python3
+from PIL import Image, ImageDraw, ImageFont, ImageFilter
 from misc_module import remove_extension as rem_ext
+#from face import *
 
+#outline está sempre true
 
 def meme_image(file_name, effect_name, args=None):
     try:
@@ -24,6 +25,7 @@ def add_text(im, args):
     draw = ImageDraw.Draw(im)
     font = ImageFont.truetype("impact.ttf", 40)
     w, h = draw.textsize(text, font=font)
+    wu, hu = draw.textsize(text_up, font=font)
     iw, ih = im.size
 
     # Bottom Text
@@ -38,12 +40,12 @@ def add_text(im, args):
     # Top Text
     if len(args) == 3:
         if outline:
-            draw.text(((iw-w)/2-1, ih*0.05-1), text_up, (0, 0, 0), font=font)
-            draw.text(((iw-w)/2+1, ih*0.05-1), text_up, (0, 0, 0), font=font)
-            draw.text(((iw-w)/2-1, ih*0.05+1), text_up, (0, 0, 0), font=font)
-            draw.text(((iw-w)/2+1, ih*0.05+1), text_up, (0, 0, 0), font=font)
+            draw.text(((iw-wu)/2-1, hu-1), text_up, (0, 0, 0), font=font)
+            draw.text(((iw-wu)/2+1, hu-1), text_up, (0, 0, 0), font=font)
+            draw.text(((iw-wu)/2-1, hu+1), text_up, (0, 0, 0), font=font)
+            draw.text(((iw-wu)/2+1, hu+1), text_up, (0, 0, 0), font=font)
 
-        draw.text(((iw-w)/2, ih*0.05), text_up, (255, 255, 255), font=font)
+        draw.text(((iw-wu)/2, hu), text_up, (255, 255, 255), font=font)
 
     return im
 
@@ -65,28 +67,35 @@ def black_and_white(im):
             nim.putpixel((x, y), (nr, ng, nb))
     return nim
 
-
-# Cut background
-def remove_background(im):
-
-    im = im.convert("RGBA")
-
-    pixdata = im.load()
-
-    width, height = im.size
-
-    for x in range(width):
-        for y in range(height):
-            if pixdata[x, y] == (123,123,123,255): #123 -> Valor em que os pixeis mudam
-                pixdata[x, y] = (123,123,123,0)
-
-    return im
-
+#Cut face from image
 #Apply another background
-def applybackground(im,args):
+#file_name is the background
+#The app should call face.py 1st, and then apply bkgrd
+def addbackground(im):
+	im_w, im_h = im.size
+	
+	background = Image.new("RGBA", (640, 480), (255, 255, 255, 255))
+	
+	offset = ((640 - img_w)/2, (480 - img_h)/2)
+	background.paste(im, offset)
+	background.save("out.png")
+	return background
 
-
-
-    return im
-
-#Help pls
+#Testing bg
+def dobg():
+	
+	im = Image.new("RGB", (640, 480), (255, 255, 255))
+	
+	draw = ImageDraw.Draw(im)
+	
+	draw.polygon([(0,0), (320,0), (320,240)], fill = (255,0,0))
+	draw.polygon([(0,0), (0,330), (320,240)], fill = (255,125,0))
+	draw.polygon([(0,330), (0,480), (320,240)], fill = (255,255,0))
+	draw.polygon([(0,480), (320,480), (320,240)], fill = (0,255,0))
+	draw.polygon([(320,0), (640,0), (320,240)], fill = (0,255,255))
+	draw.polygon([(640,0), (640,150), (320,240)], fill = (0,0,255))
+	draw.polygon([(640,150), (640,480), (320,240)], fill = (125,0,255))
+	draw.polygon([(320,480), (640,480), (320,240)], fill = (255,0,255))
+	
+	
+	im.save("out.png")
