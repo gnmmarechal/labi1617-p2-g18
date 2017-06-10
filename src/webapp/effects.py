@@ -13,10 +13,12 @@ def effect_image(file_name, effect_name, args=None):
         return -1
 
 
-# Lomography Effect
+# Blur effect
 def blur(im, arg=None):
     return im.filter(ImageFilter.BLUR)
 
+
+# Lomography Effect
 def lomography(im, arg=None):
     nim = Image.new(im.mode, im.size)
     width, height = im.size
@@ -55,17 +57,18 @@ def sepia(im, arg=None):
 def grayscale(im, arg=None):
     return im.convert("L")
 
+
 # Color Inversion
 def colorinv(im, arg=None):
-	nim = Image.new(im.mode, im.size)
-	width, height = im.size
-	
-	for x in range(width):
-		for y in range(height):
-			p = im.getpixel((x,y))
-			r = 255-p[0]
-			g = 255-p[1]
-			b = 255-p[2]
-			nim.putpixel((x,y), (r,g,b))
-	return nim
+    nim = Image.new(im.mode, im.size)
+    width, height = im.size
+
+    for x in range(width):
+        for y in range(height):
+            p = im.getpixel((x,y))
+            r = 255-p[0]
+            g = 255-p[1]
+            b = 255-p[2]
+            nim.putpixel((x,y), (r,g,b))
+    return nim
 
