@@ -9,7 +9,8 @@ def effect_image(file_name, effect_name, args=None):
         im = effect_name(Image.open(file_name), args)
         im.save(rem_ext(file_name)+".png")
         return 0
-    except Exception:
+    except Exception as e:
+        print("ERROR: " + str(e))
         return -1
 
 

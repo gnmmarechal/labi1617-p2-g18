@@ -5,12 +5,14 @@ from misc_module import remove_extension as rem_ext
 
 #outline está sempre true
 
+
 def meme_image(file_name, effect_name, args=None):
     try:
         im = effect_name(Image.open(file_name), args)
         im.save(rem_ext(file_name)+".png")
         return 0
-    except Exception: # Returns -1 if an exception is thrown. This is done to avoid any crashes.
+    except Exception as e: # Returns -1 if an exception is thrown. This is done to avoid any crashes.
+        print("ERROR: " + str(e))
         return -1
 
 
