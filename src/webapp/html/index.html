@@ -30,6 +30,20 @@
 	
 	window.URL.revokeObjectURL(picURL);
 	}
+	function parseStuff(){
+		alert(document.getElementById('meme_text_args').checked)
+		if (document.getElementById('meme_text_args').checked)
+		{
+			var useOutline = "False";
+			if (document.getElementById('outline').checked)
+				useOutline = "True";
+			document.getElementById('meme_text_args').value = "add_text!,!" + userOutline + "!,!" +  document.getElementById('textdown').value + "!,!" + document.getElementById('textup').value;
+			alert(document.getElementById('meme_text_args').value);
+		}
+
+	}
+
+
 	</script>
 	
 	
@@ -51,6 +65,16 @@
 		</ul>	
 		
 		<ul>
+			<h2>Type</h2>
+			<li class="table-view-cell">
+				<input type="radio" name="type" id="effect_radio" value="EFFECT"> Effect</input>
+			</li>
+			<li class="table-view-cell">
+				<input type="radio" name="type" id="meme_radio" value="MEME"> Meme</input>
+			</li>
+			<li class="table-view-cell">
+				<input type="radio" name="type" id="photo_radio" value="PHOTO" checked> Photo</input>
+			</li><br>
 			<h2>Effects</h2>
 			<li class="table-view-cell">	
 				<input type="radio" name="args" value="sepia" checked> Sepia</input>
@@ -61,21 +85,14 @@
 			</li>
 			<br>
 			<h2>Meme</h2>
+			<input type="radio" name="args" id="meme_text_args" value=""> Text</input>
+				<input type="text" id="textup" placeholder="Upper Text" value="" onchange="meme_text_args.value = 'add_text!,!' + outline.value + '!,!' +  textdown.value + '!,!' + textup.value">
+				<input type="text" id="textdown" placeholder="Bottom Text" value="" onchange="meme_text_args.value = 'add_text!,!' + outline.value + '!,!' +  textdown.value + '!,!' + textup.value">
 			<li class="table-view-cell">
-				<input type="Radio" name="type" value="EFFECT"> Effect</input>
-			</li>
-			<li class="table-view-cell">	
-				<input type="radio" name="type" value="MEME"> Meme (Overrid6es other changes)</input>
+				<!--<input type="checkbox" name="args" value="add_text!,!True!,!TesteA!,!TesteB"> Texto Sombreado<br>-->
+				<input type="checkbox" id="outline" value="True" onchange="var x='True'; if (outline.value == 'True') { x='False'; outline.value = x;} meme_text_args.value = 'add_text!,!' + outline.value + '!,!' +  textdown.value + '!,!' + textup.value;"checked>Outline<br>
 			</li>
 
-				<input type="text" placeholder="Texto Inferior">
-				<input type="text" placeholder="Texto Superior">
-			<li class="table-view-cell">
-				<input type="checkbox" name="args" value="add_text!,!True!,!TesteA!,!TesteB"> Texto Sombreado<br>
-			</li>
-			<li class="table-view-cell">	
-				<input type="radio" name="type" value="PHOTO" checked> No Effects</input>
-			</li>
 			<li class="table-view-cell">
 				<input type="submit" value="Submit"><br>
 			</li>
