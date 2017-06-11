@@ -109,7 +109,9 @@ O grupo optou por utilizar Python 3 como linguagem de programação principal us
 
 \section{Testes}
 
-O grupo utilizou Python3 como a linguagem de programação principal. Foram usados diversos módulos, na imagem Pillow e OpenCV(2), para a \textit{backend} maioritáriamente CherryPy, e finalmente, para a \textit{frontend} o módulo Ratchet.
+O grupo utilizou Python3 como a linguagem de programação principal. Foram usados diversos módulos, na imagem Pillow e OpenCV, para a \textit{backend} maioritariamente CherryPy e SQLite3, e finalmente, para a \textit{frontend} o módulo Ratchet, HTML e JavaScript.
+A frontend está fundida com a backend.
+A aplicação e as suas funções foram testadas numa VPS Debian e num computador local a correr Windows 10, devido a problemas com o XCOA. Uma variável booleana controla o comportamento da aplicação, dizendo-lhe se está a correr no XCOA ou não.
 
 
 \chapter{Descrição da aplicação}
@@ -146,6 +148,7 @@ A submissão de imagens é feita através de um método /api/put, o qual usa um 
 \subsection{Galeria}
 
 A página da galeria(\ref{GalPag}) é apresentada de forma simples, também permite o utilizador realizar votos nas imagens como consultar os mesmos. A apresentação da galeria de imagens usa o método /api/listAll onde é fornecida uma lista com todas imagens dos grupos, votos e autor. Os votos são realizados através de /api/vote onde são enviados o identificador da fotografia, do utilizador e o tipo de voto.
+Devido a um bug na frontend, os votos têm de ser abertos num separador novo para funcionarem.
 \begin{figure}[b]
  \center
  \includegraphics[scale=0.5]{final_gallery.png}
@@ -158,20 +161,20 @@ A página da galeria(\ref{GalPag}) é apresentada de forma simples, também perm
 \subsection{Efeitos}
 
 Para a realização dos efeitos foi utilizado Python3 e o módulo Pillow.
-Os efeitos disponíveis no programa são: \textit{blur}, escala de cinzentos, \textit{lomography}, sepia e invesão de cor. Para a realização dos dois primeiros a imagem é processada com desfocagem e alterado o modo da imagem. Para os outros efeitos são aplicadas fórmulas matemáticas aos canais Vermelho, Verde e Azul para fazer modificações pixel a pixel à imagem.
+Os efeitos disponíveis no programa são: \textit{blur}, escala de cinzentos, \textit{lomography}, sépia e invesão de cor. Para a realização dos dois primeiros a imagem é processada com desfocagem e alterado o modo da imagem. Para os outros efeitos são aplicadas fórmulas matemáticas aos canais Vermelho, Verde e Azul para fazer modificações pixel a pixel à imagem.
 
 \subsection{Gerador de Memes}
 
-Este módulo permite aplicar texto à imagem tanto na parte inferior como superior, sombreado ou não. Também tem como objetivo recortar uma cara da imagem e por sobre um fundo branco ou colorido, à escolha do utilizador. No entanto, este módulo causou algum transtorno vistos que não foi possível existir uma forma correta de recortar uma cara de uma imagem.
+Este módulo permite aplicar texto à imagem tanto na parte inferior como superior, sombreado ou não. Também tem como objetivo recortar uma cara da imagem e por sobre um fundo colorido, à escolha do utilizador. No entanto, este módulo causou algum transtorno vistos que não foi possível existir uma forma correta de recortar uma cara de uma imagem.
 
 \subsection{Backend}
-
+A backend contém duas classes. Root e API. A API implementa a API pedida pelo enunciado, contendo métodos que permitem adquirir informação e interagir com a base de dados, além de fazer upload e pedido de modificação das imagens.
 
 \chapter{Resultados e Análise}
 \label{chap.res}
 
 \section{Página Web}
-	As páginas não ficaram com o aspeto inicialmente pretendido devido a problemas com JavaScript. No entanto foi possível adaptar as mesma para ficarem fácil uso.
+	As páginas não ficaram com o aspeto inicialmente pretendido devido a problemas com JavaScript. No entanto foi possível adaptar as mesmas para ficarem fácil uso.
 \section{Núcleo}	
 \subsection{Tratamento de Imagem}
 	O módulo dos efeito ficou feito em geral sem problemas, no entanto o mesmo não aconteceu no módulo de memes. Foram encontradas diversas dificuldades, sendo a maior delas o reconhecimento facial para recorte de uma cara, acabou por se ter de usar o módulo OpenCV para o reconhecimento dos olhos e face, sendo recortado num retângulo a cara encontrada, um problema conhecido é caso exista mais que uma cara detetada pelo algorítmo o resultado já não é o desejado. Existem dois fundos gerados pelo módulo Pillow que aplicam a cara recortada anteriormente.
