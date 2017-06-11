@@ -34,6 +34,8 @@ config = {
              "tools.staticdir.dir": "css" },
   "/html": { "tools.staticdir.on": True,
              "tools.staticdir.dir": "html" },
+  "/uploads": {"tools.staticdir.dir": True,
+               "tools.staticdir.dir": "uploads"},
 }
 
 
@@ -130,7 +132,7 @@ class AppAPI(object):
             else:
                 c.execute("""UPDATE images SET downvotes=downvotes+1 WHERE id="%s"; """ % id)
         conn.commit()
-        return """<meta http-equiv="refresh" content="0; url=get?id=%s" />""" % id
+        return """<meta http-equiv="refresh" content="0; url=../gallery" />"""
 
     @cherrypy.expose
     def list(self):
@@ -213,6 +215,7 @@ class AppAPI(object):
         #res = effects.effect_image("temp/" + image.filename, method)
         #return
         im = Image.open("temp/" + image.filename)
+        im.thumbnail((640,480))
         im.save("temp2/" + str(image_id) + ".png")
         os.remove("temp/" + image.filename)
         #sql_query2 = "INSERT INTO images VALUES ("str(image_id) + "\", \"" + str(type) + "\", \"" + str(author) + "\", " + str(timestamp) + "," + str(0) + "," + str(0) + ");"
@@ -222,6 +225,7 @@ class AppAPI(object):
         c.execute("""CREATE TABLE IF NOT EXISTS images (id TEXT PRIMARY KEY, type TEXT, author TEXT, timestamp INTEGER, upvotes INTEGER, downvotes INTEGER);""")
         c.execute("""INSERT INTO images VALUES ("%s", "%s", "%s", %s, 0, 0);""" % (str(image_id), str(type), str(author), str(timestamp)))
         conn.commit()
+
         c.close()
         arg_complete = args.split("&,&")
         for arg in arg_complete:
@@ -242,7 +246,7 @@ class AppAPI(object):
 
         Image.open("temp2/" + str(image_id) + ".png").save("uploads/" + str(image_id) + ".png")
         os.remove("temp2/" + str(image_id) + ".png")
-        return """<meta http-equiv="refresh" content="0; url=get?id=%s" />""" % image_id
+        return """<meta http-equiv="refresh" content="0; url=../gallery" />"""
 
 
 
@@ -254,6 +258,18 @@ class Root(object):
         cherrypy.response.headers['Content-Type'] = 'text/html'
         # return "<HTML html> <HEAD><TITLE>P2 Labi</TITLE></HEAD><BODY><H1>Hello World</H1></BODY></HTML>"
         return open("html/index.html").read()
+
+    @cherrypy.expose
+    def gallery(self):
+        partA = """<!doctype html><html lang="en"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Proj2-Galeria</title><meta name="viewport" content="initial-scale=1, maximum scale=1, user-scalable=no, minimal-ui"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black"><link rel="stylesheet" href="css/ratchet.css"><link rel="stylesheet" href="css/ratchet-theme-android.css"><link rel="stylesheet" href="css/app.css"><script src="js/jquery-2.2.3.min.js"></script><script src="js/ratchet.js"></script></head><body><header class="bar bar-nav"> <button class="btn btn-link btn-nav pull-right" style="pointer-events: none"> <b>Gallery</b> <span class="icon icon-pages"></span> </button> <form action="index"> <button class="btn btn-link btn-nav pull-left"> <span class="icon icon-home"></span> Home </button> <h1 class="title" style="text-align:center"><b>&nbsp;Projeto 2</b></h1> </form> </header><div class="content" ><!--<input type="button" name="" id="" value="Back"></input>-->"""
+        partC = """	</div></body></html>"""
+        picture_list = json.loads(self.api.list())
+        # a = """<img src="api/get?id=%s" >""" % picture_list[0]["id"]
+        reply = partA
+        for picture in picture_list:
+            reply += """<div style="text-align:center"><img src="api/get?id=%s"><br><a href="api/vote?id=%s&vote=1" class="button">   +  (%s) </a><a href="api/vote?id=%s&vote=-1" class="button">   -  (%s) </a><br><br></div>""" % (str(picture["id"]),str(picture["id"]), str(picture["votes_up"]),str(picture["id"]),str(picture["votes_down"]))
+        reply += partC
+        return reply
 
 
 cherrypy.quickstart(Root(), "/", config)

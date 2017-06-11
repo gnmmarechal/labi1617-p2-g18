@@ -30,19 +30,10 @@
 	
 	window.URL.revokeObjectURL(picURL);
 	}
-	function parseStuff(){
-		alert(document.getElementById('meme_text_args').checked)
-		if (document.getElementById('meme_text_args').checked)
-		{
-			var useOutline = "False";
-			if (document.getElementById('outline').checked)
-				useOutline = "True";
-			document.getElementById('meme_text_args').value = "add_text!,!" + userOutline + "!,!" +  document.getElementById('textdown').value + "!,!" + document.getElementById('textup').value;
-			alert(document.getElementById('meme_text_args').value);
-		}
+	function disableAll(){
+		textup.disabled = textdown.disabled = outline.disabled = meme_text_args.disabled = false;
 
 	}
-
 
 	</script>
 	
@@ -50,9 +41,19 @@
 </head>
 <body>
 	
-	<header class="bar bar-nav">
-		<h1 class="title">Projeto 2</h1>
-	</header>
+<header class="bar bar-nav">
+        <button class="btn btn-link btn-nav pull-left" style="pointer-events: none">
+            <span class="icon icon-home"></span>
+            <b>Home</b>
+        </button>
+        <form  action="gallery">
+            <button class="btn btn-link btn-nav pull-right">
+                Gallery
+            <span class="icon icon-pages"></span>
+            </button>
+            <h1 class="title" style="text-align:center" ><b>Projeto 2</b></h1>
+        </form>
+</header>
 	
 	<div class="content">
 		<form name="input" action="api/put" method="POST" enctype="multipart/form-data"  >
@@ -67,47 +68,59 @@
 		<ul>
 			<h2>Type</h2>
 			<li class="table-view-cell">
-				<input type="radio" name="type" id="effect_radio" value="EFFECT"> Effect</input>
+				<!--onchange="if (effect_radio.checked) { textup.disabled = textdown.disabled = outline.disabled = meme_text_args.disabled = true;};"-->
+				<input type="radio" name="type" id="effect_radio" value="EFFECT" > Effect</input>
 			</li>
 			<li class="table-view-cell">
-				<input type="radio" name="type" id="meme_radio" value="MEME"> Meme</input>
+				<input type="radio" name="type" id="meme_radio" value="MEME" > Meme</input>
 			</li>
 			<li class="table-view-cell">
 				<input type="radio" name="type" id="photo_radio" value="PHOTO" checked> Photo</input>
 			</li><br>
 			<h2>Effects</h2>
-			<li class="table-view-cell">	
-				<input type="radio" name="args" value="sepia" checked> Sepia</input>
-							
+
+			<li class="table-view-cell">
+				<input type="radio" name="args" value="blur" checked> Blur</input>
+
+			</li>
+			<li class="table-view-cell">
+				<input type="radio" name="args" value="grayscale" checked> Grayscale</input>
 			</li>
 			<li class="table-view-cell">
 				<input type="radio" name="args" value="lomography"> Lomography</input>
 			</li>
+			<li class="table-view-cell">
+				<input type="radio" name="args" value="sepia" checked> Sepia</input>
+
+			</li>
 			<br>
+			<div id="MEME_DIV">
 			<h2>Meme</h2>
-			<input type="radio" name="args" id="meme_text_args" value=""> Text</input>
-				<input type="text" id="textup" placeholder="Upper Text" value="" onchange="meme_text_args.value = 'add_text!,!' + outline.value + '!,!' +  textdown.value + '!,!' + textup.value">
-				<input type="text" id="textdown" placeholder="Bottom Text" value="" onchange="meme_text_args.value = 'add_text!,!' + outline.value + '!,!' +  textdown.value + '!,!' + textup.value">
+			<input type="radio" name="args" id="meme_text_args" value=""> Simple Text</input>
+				<li class="table-view-cell">
+					<input type="radio" name="args" id="pregnancy" value="" > Pregnancy Test</input>
+				</li>
+				<li class="table-view-cell">
+					<input type="radio" name="args" id="trianglethings" value="dobgtriangle"> Coloured Background (Triangles)</input>
+				</li>
+				<li class="table-view-cell">
+					<input type="radio" name="args" id="circlethings" value=""> Coloured Background (Circles)</input>
+				</li>
+
+				<input type="text" id="textup" placeholder="Upper Text" value="" onchange="meme_text_args.value = 'add_text!,!' + outline.value + '!,!' +  textdown.value + '!,!' + textup.value; circlethings.value = 'dobgcircle&,&' + meme_text_args.value; pregnancy.value = 'ptest&,&' + meme_text_args.value; trianglethings.value = 'dobgtriangle&,&' + meme_text_args.value;">
+				<input type="text" id="textdown" placeholder="Bottom Text" value="" onchange="meme_text_args.value = 'add_text!,!' + outline.value + '!,!' +  textdown.value + '!,!' + textup.value; circlethings.value = 'dobgcircle&,&' + meme_text_args.value; pregnancy.value = 'ptest&,&' + meme_text_args.value; trianglethings.value = 'dobgtriangle&,&' + meme_text_args.value;">
 			<li class="table-view-cell">
 				<!--<input type="checkbox" name="args" value="add_text!,!True!,!TesteA!,!TesteB"> Texto Sombreado<br>-->
-				<input type="checkbox" id="outline" value="True" onchange="var x='True'; if (outline.value == 'True') { x='False'; outline.value = x;} meme_text_args.value = 'add_text!,!' + outline.value + '!,!' +  textdown.value + '!,!' + textup.value;"checked>Outline<br>
+				<input type="checkbox" id="outline" value="True" onchange="var x='True'; if (outline.value == 'True') { x='False'; outline.value = x;} meme_text_args.value = 'add_text!,!' + outline.value + '!,!' +  textdown.value + '!,!' + textup.value; circlethings.value = 'dobgcircle&,&' + meme_text_args.value; pregnancy.value = 'ptest&,&' + meme_text_args.value; trianglethings.value = 'dobgtriangle&,&' + meme_text_args.value;"checked>Outline<br>
 			</li>
 
+			</li>
+			</div>
 			<li class="table-view-cell">
 				<input type="submit" value="Submit"><br>
 			</li>
 		</ul>
 		</form>
-	</div>
-	<div>				
-		<nav class="bar bar-tab">
-			<a class="tab-item active" href="#">
-			Home
-			</a>
-			<a class="tab-item" href="galeria.html" target="_self">
-			Gallery
-			</a>
-		</nav>
 	</div>
   
 </body>
