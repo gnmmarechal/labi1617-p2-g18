@@ -1,15 +1,17 @@
 #Coded on Python3
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 from misc_module import remove_extension as rem_ext
+import numpy as np
 import cv2
-#OpenCV2 Only used for face recognition
+#OpenCV2 was used for face recognition
 
 def meme_image(file_name, effect_name, args=None):
     try:
         im = effect_name(Image.open(file_name), args)
         im.save(rem_ext(file_name)+".png")
         return 0
-    except Exception: # Returns -1 if an exception is thrown. This is done to avoid any crashes.
+    except Exception as e:
+        print("ERROR: " + str(e))
         return -1
 
 
@@ -22,78 +24,66 @@ def add_text(im, args):
     if len(args) == 3:
         text_up = args[2].upper()
     draw = ImageDraw.Draw(im)
-    font = ImageFont.truetype("impact.ttf", 40)
+    font = ImageFont.truetype("impact.ttf", 30)
     w, h = draw.textsize(text, font=font)
     wu, hu = draw.textsize(text_up, font=font)
     iw, ih = im.size
 
     # Bottom Text
     if outline:
-        draw.text(((iw-w)/2-1, ih*0.8-1), text, (0, 0, 0), font=font)
-        draw.text(((iw-w)/2+1, ih*0.8-1), text, (0, 0, 0), font=font)
-        draw.text(((iw-w)/2-1, ih*0.8+1), text, (0, 0, 0), font=font)
-        draw.text(((iw-w)/2+1, ih*0.8+1), text, (0, 0, 0), font=font)
+        draw.multiline_text(((iw-w)/2-1, ih*0.8-1), text, (0, 0, 0), font=font)
+        draw.multiline_text(((iw-w)/2+1, ih*0.8-1), text, (0, 0, 0), font=font)
+        draw.multiline_text(((iw-w)/2-1, ih*0.8+1), text, (0, 0, 0), font=font)
+        draw.multiline_text(((iw-w)/2+1, ih*0.8+1), text, (0, 0, 0), font=font)
 
-    draw.text(((iw-w)/2, ih*0.8), text, (255, 255, 255), font=font)
+    draw.multiline_text(((iw-w)/2, ih*0.8), text, (255, 255, 255), font=font)
 
     # Top Text
     if len(args) == 3:
         if outline:
-            draw.text(((iw-wu)/2-1, hu-1), text_up, (0, 0, 0), font=font)
-            draw.text(((iw-wu)/2+1, hu-1), text_up, (0, 0, 0), font=font)
-            draw.text(((iw-wu)/2-1, hu+1), text_up, (0, 0, 0), font=font)
-            draw.text(((iw-wu)/2+1, hu+1), text_up, (0, 0, 0), font=font)
+            draw.multiline_text(((iw-wu)/2-1, hu-1), text_up, (0, 0, 0), font=font)
+            draw.multiline_text(((iw-wu)/2+1, hu-1), text_up, (0, 0, 0), font=font)
+            draw.multiline_text(((iw-wu)/2-1, hu+1), text_up, (0, 0, 0), font=font)
+            draw.multiline_text(((iw-wu)/2+1, hu+1), text_up, (0, 0, 0), font=font)
 
-        draw.text(((iw-wu)/2, hu), text_up, (255, 255, 255), font=font)
+        draw.multiline_text(((iw-wu)/2, hu), text_up, (255, 255, 255), font=font)
 
     return im
 
 
 # Black and White -> Sepia from effects.py
-def black_and_white(im):
-    nim = Image.new(im.mode, im.size)
-    width, height = im.size
-
-    for x in range(width):
-        for y in range(height):
-            p = im.getpixel((x,y))
-            r = p[0]
-            g = p[1]
-            b = p[2]
-            nr = int(round(r * 0.189 + g * 0.769 + b * 0.393))
-            ng = int(round(r * 0.168 + g * 0.686 + b * 0.349))
-            nb = int(round(r * 0.131 + g * 0.534 + b * 0.272))
-            nim.putpixel((x, y), (nr, ng, nb))
-    return nim
+def black_and_white(im,args=None):
+	 return im.convert("L")
 
 #Cut face from image
 #Apply another background
 #file_name is the background
 #The app should call face.py 1st, and then apply bkgrd
-def addbackground(im,args):
-	#Type of Bg; Circle,Triangles,Blank
-	if len(args) > 1:
-		raise Exception("Wrong argument length")
-        
-	bg_pick = args[0] 
-	#Cut face from image
-	face_im = facecut(im)
+
+def ptest(im, args=None):
+	im_w, im_h = im.size
+	ptr = Image.open("ptestright.png", "r")
+	ptl = Image.open("ptestleft.png", "r" )
+
 	
-	im_w, im_h = face_im.size	
+	offsright = (im_w-272,im_h-225)
 	
-	if bg_pick == "circle":
-		background = dobg2()	
-	elif bg_pick == "triangle":
-		background = dobg()	
-	else:	
-		Image.new("RGB", (640, 480), (255, 255, 255))
+	offsleft = (0,im_h-159)
 	
-	offset = ((640 - img_w)/2, (480 - img_h)/2)
-	background.paste(im, offset)
-	return background
+	im.paste(ptr, offsright,ptr)
+	
+	im.paste(ptl, offsleft,ptl)
+	
+	return im
 
 #Triangle Background
-def dobg():
+def dobgtriangle(im, args=None):
+
+	img = np.array(im)
+	img = img[:, :, ::-1].copy() 
+	
+	face_im = facecut(img)	
+	im_w, im_h = face_im.size	
 	
 	bg = Image.new("RGB", (640, 480), (255, 255, 255))
 	
@@ -108,11 +98,19 @@ def dobg():
 	draw.polygon([(640,150), (640,480), (320,240)], fill = (125,0,255))
 	draw.polygon([(320,480), (640,480), (320,240)], fill = (255,0,255))
 	
-	
+	offset = ((640 - im_w)//2, (480 - im_h)//2)
+	bg.paste(face_im, offset)
 	return bg
 
 #Circle Background
-def dobg2(args=None):
+def dobgcircle(im, args=None):
+	
+	img = np.array(im)
+	img = img[:, :, ::-1].copy() 
+	
+	face_im = facecut(img)	
+	im_w, im_h = face_im.size	
+	
 	
 	bg = Image.new("RGB", (640, 480), (255, 255, 255))
 	
@@ -134,18 +132,24 @@ def dobg2(args=None):
 	draw.ellipse((200,120, 440, 360), fill = 'white', outline ='black')
 	draw.ellipse((240,160, 400, 320), fill = 'gray', outline ='black')
 	draw.ellipse((280,200, 360, 280), fill = 'black', outline ='white')
-	
+		
+	offset = ((640 - im_w)//2, (480 - im_h)//2)
+	bg.paste(face_im, offset)
 	return bg
 
+
+#IMPORTANT NOTE
 #This function was adapted from different
 #http://gregblogs.com/computer-vision-cropping-faces-from-images-using-opencv2/
 #http://docs.opencv.org/trunk/d7/d8b/tutorial_py_face_detection.html
 #https://realpython.com/blog/python/face-recognition-with-python/
 
-def facecut(file_name):
+def facecut(img,args=None):
+
 	face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_alt.xml')
 	eye_cascade = cv2.CascadeClassifier('haarcascade_eye.xml')
-	img = cv2.imread(file_name)
+	
+	
 	height = img.shape[0]
 	width = img.shape[1]
 	size = height * width
