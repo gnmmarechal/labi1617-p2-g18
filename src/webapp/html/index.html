@@ -11,7 +11,6 @@
 	<link rel="stylesheet" href="css/app.css">
 	<script src="js/jquery-2.2.3.min.js"></script>
 	<script src="js/ratchet.js"></script>
-	<script src="myscripts.js"></script>
 	<script>
 	function updatePhoto(event){
 	var reader = new FileReader()
@@ -28,7 +27,6 @@
 	}
 	//Get File
 	reader.readAsDataURL(event.target.files[0]);
-	sendFile(event.target.files[0]);
 	
 	window.URL.revokeObjectURL(picURL);
 	}
@@ -43,13 +41,13 @@
 	</header>
 	
 	<div class="content">
+		<form name="input" action="api/put" method="POST" enctype="multipart/form-data"  >
 		<ul style="padding-left:2em"class="table-view">
 			<br>
 			<li class="table-view-cell">
-				<form name="input" action="api/put" method="POST" enctype="multipart/form-data" accept="image/*" onchange="updatePhoto(event);" > Select image <input
-				type="file" value ="None" name="image"></input></form>
+				Select image <input type="file" value ="None" name="image" onchange="updatePhoto(event);"></input>
 			</li>
-			 <canvas style="margin:auto;display:block;border-style:solid" id="photo" width="640" height="480">
+			<canvas style="margin:auto;display:block;border-style:solid" id="photo" width="640" height="480"></canvas>
 		</ul>	
 		
 		<ul>
@@ -67,13 +65,11 @@
 				<input type="Radio" name="type" value="EFFECT"> Effect</input>
 			</li>
 			<li class="table-view-cell">	
-				<input type="radio" name="type" value="MEME"> Meme (Overrides other changes)</input>
+				<input type="radio" name="type" value="MEME"> Meme (Overrid6es other changes)</input>
 			</li>
-			
-			<form>
+
 				<input type="text" placeholder="Texto Inferior">
-				<input type="text" placeholder="Texto Superior">					
-			</form>
+				<input type="text" placeholder="Texto Superior">
 			<li class="table-view-cell">
 				<input type="checkbox" name="args" value="add_text!,!True!,!TesteA!,!TesteB"> Texto Sombreado<br>
 			</li>
@@ -83,9 +79,9 @@
 			<li class="table-view-cell">
 				<input type="submit" value="Submit"><br>
 			</li>
-		<ul>
+		</ul>
+		</form>
 	</div>
-	
 	<div>				
 		<nav class="bar bar-tab">
 			<a class="tab-item active" href="#">
