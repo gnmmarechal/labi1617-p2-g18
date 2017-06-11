@@ -9,6 +9,8 @@ import meme
 import os
 import glob
 from misc_module import remove_extension as rem_ext
+from random import choice
+from string import ascii_lowercase
 
 
 class This(object):
@@ -45,12 +47,31 @@ class AppAPI(object):
             os.remove(i)
 
     def get_username(self):
+        cherrypy.response.headers['Content-Type'] = 'text/html'
         if This.xcoa:
             return cherrypy.request.headers.get("X-Remote-User")
-        return "tesst"
+        return "teste@localpc.com"
 
     def get_img_id(self):
-        return "teast"
+        cherrypy.response.headers['Content-Type'] = 'text/html'
+        length = 10
+        id = ""
+        while True:
+            id = ''.join(choice(ascii_lowercase) for i in range(length))
+            # CHECK IF IT EXISTS IN MY DATABASE
+            conn = sql.connect("proj2.db")
+            c = conn.cursor()
+            c.execute("""CREATE TABLE IF NOT EXISTS images (id TEXT PRIMARY KEY, type TEXT, author TEXT, timestamp INTEGER, upvotes INTEGER, downvotes INTEGER);""")
+            c.execute("""SELECT * FROM images WHERE id="%s"; """ % id)
+            conn.commit()
+            exist = c.fetchone()
+            c.close()
+            if exist is None:
+                break
+            # CHECK IF IT EXISTS IN THEIR DATABASE
+            # all = self.listAll()
+
+        return id
 
     def db(self, database, sql_commands):
         try:
@@ -63,6 +84,7 @@ class AppAPI(object):
 
     @cherrypy.expose
     def kill(self):
+        cherrypy.response.headers['Content-Type'] = 'text/html'
         if This.debug:
             cherrypy.engine.exit()
             return "Killed server."
@@ -71,6 +93,7 @@ class AppAPI(object):
 
     @cherrypy.expose
     def clean(self):
+        cherrypy.response.headers['Content-Type'] = 'text/html'
         if This.debug:
             os.remove("proj2.db")
             self.rm_all("temp/*")
@@ -81,24 +104,57 @@ class AppAPI(object):
             return "Not in debug mode."
 
     @cherrypy.expose
-    def vote(self, id=None, uid=None, vote=None):
+    def vote(self, id=None, vote=None):
+        uid = self.get_username()
+        cherrypy.response.headers['Content-Type'] = 'text/html'
         # Add check for existence of image here
         if str(vote) != "-1" and str(vote) != "1":
             return "{ 'msg': 'WRONG VOTE', 'code': '1', 'vote':" + str(vote) + ", 'status': 'ERROR'}"
 
         # Update table with vote value
-        return "The user " + str(uid) + " voted " + str(vote)
+        conn = sql.connect("proj2.db")
+        c = conn.cursor()
+        c.execute("""CREATE TABLE IF NOT EXISTS votes ( collective_id TEXT); """)
+        c.execute("""CREATE TABLE IF NOT EXISTS images (id TEXT PRIMARY KEY, type TEXT, author TEXT, timestamp INTEGER, upvotes INTEGER, downvotes INTEGER);""")
+
+        c.execute("""SELECT * FROM images WHERE id="%s"; """ % id)
+        conn.commit()
+        exist = c.fetchone()
+        c.execute("""SELECT * FROM votes WHERE (collective_id="%s"); """ % (uid + "!!!" + id))
+        conn.commit()
+        exist1 = c.fetchone()
+        if (exist is not None) and (exist1 is None):
+            c.execute("""INSERT INTO votes VALUES ( "%s");""" % (uid + "!!!" + id))
+            if str(vote) == "1":
+                c.execute("""UPDATE images SET upvotes=upvotes+1 WHERE id="%s"; """ % id)
+            else:
+                c.execute("""UPDATE images SET downvotes=downvotes+1 WHERE id="%s"; """ % id)
+        conn.commit()
+        return """<meta http-equiv="refresh" content="0; url=get?id=%s" />""" % id
 
     @cherrypy.expose
     def list(self):
+        cherrypy.response.headers['Content-Type'] = 'text/html'
         return "[]"
 
     @cherrypy.expose
-    def get(self, id):
-        return "[]"
+    def get(self, id="teast"):
+        conn = sql.connect("proj2.db")
+        c = conn.cursor()
+        c.execute("""CREATE TABLE IF NOT EXISTS images (id TEXT PRIMARY KEY, type TEXT, author TEXT, timestamp INTEGER, upvotes INTEGER, downvotes INTEGER);""")
+        c.execute("""SELECT * FROM images WHERE id="%s"; """ % id)
+        conn.commit()
+        exist = c.fetchone()
+        c.close()
+        cherrypy.response.headers['Content-Type'] = "image/png"
+        if exist is None:
+            return open("404.png", "rb").read()
+        else:
+            return open("uploads/" + id + ".png", "rb").read()
 
     @cherrypy.expose
     def listAll(self):
+        cherrypy.response.headers['Content-Type'] = 'text/html'
         # Get all online apps, then request /api/list from each of them and store that.
         apps_port = urllib.request.urlopen("http://xcoa.av.it.pt/labi1617-p2-list").read().decode("utf-8")[1:-1].split(",")
         dict_response = {}
@@ -124,7 +180,7 @@ class AppAPI(object):
 
     @cherrypy.expose
     def put(self, image, type, args):  # args --> effect!,!text!,!textup por exemplo
-
+        cherrypy.response.headers['Content-Type'] = 'text/html'
         if not type == "MEME" and type == "EFFECT" and type == "PHOTO":
             return -1
         image_id = self.get_img_id()
@@ -147,21 +203,10 @@ class AppAPI(object):
         # Database stuff
         conn = sql.connect("proj2.db")
         c = conn.cursor()
-        c.execute("""CREATE TABLE IF NOT EXISTS images (id TEXT, type TEXT, author TEXT, timestamp INTEGER, upvotes INTEGER, downvotes INTEGER);""")
+        c.execute("""CREATE TABLE IF NOT EXISTS images (id TEXT PRIMARY KEY, type TEXT, author TEXT, timestamp INTEGER, upvotes INTEGER, downvotes INTEGER);""")
         c.execute("""INSERT INTO images VALUES ("%s", "%s", "%s", %s, 0, 0);""" % (str(image_id), str(type), str(author), str(timestamp)))
         conn.commit()
-        c.execute("""SELECT * FROM images""")
-        a = 0
-        r = [None] * 10
-        for row in c:
-            r[a] = str(row)
-            a += 1
         c.close()
-        return r[0]
-
-
-
-
         arg_complete = args.split("&,&")
         for arg in arg_complete:
             am = arg.split("!,!")
@@ -181,7 +226,7 @@ class AppAPI(object):
 
         Image.open("temp2/" + str(image_id) + ".png").save("uploads/" + str(image_id) + ".png")
         os.remove("temp2/" + str(image_id) + ".png")
-        return self.get(image_id)
+        return """<meta http-equiv="refresh" content="0; url=get?id=%s" />""" % image_id
 
 
 
@@ -190,6 +235,7 @@ class Root(object):
 
     @cherrypy.expose
     def index(self):
+        cherrypy.response.headers['Content-Type'] = 'text/html'
         # return "<HTML html> <HEAD><TITLE>P2 Labi</TITLE></HEAD><BODY><H1>Hello World</H1></BODY></HTML>"
         return open("html/index.html").read()
 
