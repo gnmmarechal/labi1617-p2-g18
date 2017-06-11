@@ -93,12 +93,12 @@
 \chapter{Introdução}
 \label{chap.introducao} 
 
-Neste projeto é pretendido uma aplicação móvel onde o utilizador possa enviar fotografias para um servidor, podendo ou não aplicar filtros. Também existe uma galeria contendo todas as imagens submetidas pelos grupos.
+Neste projeto é pretendida a criação de uma aplicação móvel através da qual o utilizador possa enviar fotografias para um servidor, podendo ou não aplicar filtros. Também existe uma galeria contendo todas as imagens submetidas pelos grupos.
 
 \chapter{Metodologia}
 \label{chap.metodologia}
 
-O grupo optou por utilizar Python 3 como linguagem de programação principal usufruindo do módulo Pillow PIL. Para desenvolver o programa o grupo foi desenvolvendo um pouco de cada módulo até à sua finalidade.
+O grupo optou por utilizar Python 3 como linguagem de programação principal usufruindo do módulo Pillow e CherryPy. Para desenvolver o programa o grupo foi desenvolvendo um pouco de cada módulo até à sua finalidade.
 
 \section{Testes}
 
@@ -114,6 +114,7 @@ O grupo optou por utilizar Python 3 como linguagem de programação principal us
 
 \subsection{Submissão de Imagem}
 
+A submissão de imagens é feita através de um método /api/put, o qual usa um pedido POST que envia a imagem e os argumentos (com os efeitos a utilizar, por exemplo). Este método faz uso de um outro método na classe API para obter um ID para a imagem a carregar antes de o fazer.
 
 \subsection{Galeria}
 
@@ -144,10 +145,10 @@ O grupo optou por utilizar Python 3 como linguagem de programação principal us
 
 \chapter*{Acrónimos}
 \begin{acronym}
- \acro{ua}[UA]{Universidade de Aveiro}
+ \acro{api}[API] {Application Programming Interface/Interface de Programação de Aplicações}
  \acro{deti}[DETI]{Departamento de Electrónica, Telecomunicações e Informática}
  \acro{miect}[MIECT]{Mestrado Integrado em Engenharia de Computadores e Telemática}
-
+ \acro{ua}[UA]{Universidade de Aveiro}
 \end{acronym}
 
 

@@ -109,7 +109,7 @@ class AppAPI(object):
         cherrypy.response.headers['Content-Type'] = 'text/html'
         # Add check for existence of image here
         if str(vote) != "-1" and str(vote) != "1":
-            return "{ 'msg': 'WRONG VOTE', 'code': '1', 'vote':" + str(vote) + ", 'status': 'ERROR'}"
+            return """<a href="vote?id=%s&vote=1">Upvote</a><br><a href="vote?id=%s&vote=-1">Downvote</a>""" % (id, id)
 
         # Update table with vote value
         conn = sql.connect("proj2.db")
@@ -135,6 +135,7 @@ class AppAPI(object):
     @cherrypy.expose
     def list(self):
         cherrypy.response.headers['Content-Type'] = 'text/html'
+
         return "[]"
 
     @cherrypy.expose
@@ -174,9 +175,8 @@ class AppAPI(object):
                 print("URL: " + server + " PORT:" + og_port + "ERROR: " + str(e))
         if not This.xcoa:  # If the computer is not xcoa, obtain the information for it and add it to the dictionary.
             dict_response[str(This.port)] = str(list())
-        json_response = json.dumps(dict_response)
 
-        return json_response
+        return json.dumps(dict_response)
 
     @cherrypy.expose
     def put(self, image, type, args):  # args --> effect!,!text!,!textup por exemplo
