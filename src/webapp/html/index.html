@@ -1,15 +1,102 @@
-<HTML html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Proj2-Home</title>
+	<meta name="viewport" content="initial-scale=1, maximum scale=1, user-scalable=no, minimal-ui">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<link rel="stylesheet" href="css/ratchet.css">
+	<link rel="stylesheet" href="css/ratchet-theme-android.css">
+	<link rel="stylesheet" href="css/app.css">
+	<script src="js/jquery-2.2.3.min.js"></script>
+	<script src="js/ratchet.js"></script>
+	<script src="myscripts.js"></script>
+	<script>
+	function updatePhoto(event){
+	var reader = new FileReader()
+	reader.onload = function(event){
+		//Create img
+		var img = new Image();
+		img.onload = function(){
+			//Place img on screen
+			canvas = document.getElementById("photo");
+			ctx = canvas.getContext("2d");
+			ctx.drawImage(img,0,0,img.width,img.height,0,0,640,480);			
+		}
+		img.src = event.target.result;
+	}
+	//Get File
+	reader.readAsDataURL(event.target.files[0]);
+	sendFile(event.target.files[0]);
+	
+	window.URL.revokeObjectURL(picURL);
+	}
+	</script>
+	
+	
+</head>
+<body>
+	
+	<header class="bar bar-nav">
+		<h1 class="title">Projeto 2</h1>
+	</header>
+	
+	<div class="content">
+		<ul style="padding-left:2em"class="table-view">
+			<br>
+			<li class="table-view-cell">
+				<form name="input" action="api/put" method="POST" enctype="multipart/form-data" accept="image/*" onchange="updatePhoto(event);" > Select image <input
+				type="file" value ="None" name="image"></input></form>
+			</li>
+			 <canvas style="margin:auto;display:block;border-style:solid" id="photo" width="640" height="480">
+		</ul>	
+		
+		<ul>
+			<h2>Effects</h2>
+			<li class="table-view-cell">	
+				<input type="radio" name="args" value="sepia" checked> Sepia</input>
+							
+			</li>
+			<li class="table-view-cell">
+				<input type="radio" name="args" value="lomography"> Lomography</input>
+			</li>
+			<br>
+			<h2>Meme</h2>
+			<li class="table-view-cell">
+				<input type="Radio" name="type" value="EFFECT"> Effect</input>
+			</li>
+			<li class="table-view-cell">	
+				<input type="radio" name="type" value="MEME"> Meme (Overrides other changes)</input>
+			</li>
+			
+			<form>
+				<input type="text" placeholder="Texto Inferior">
+				<input type="text" placeholder="Texto Superior">					
+			</form>
+			<li class="table-view-cell">
+				<input type="checkbox" name="args" value="add_text!,!True!,!TesteA!,!TesteB"> Texto Sombreado<br>
+			</li>
+			<li class="table-view-cell">	
+				<input type="radio" name="type" value="PHOTO" checked> No Effects</input>
+			</li>
+			<li class="table-view-cell">
+				<input type="submit" value="Submit"><br>
+			</li>
+		<ul>
+	</div>
+	
+	<div>				
+		<nav class="bar bar-tab">
+			<a class="tab-item active" href="#">
+			Home
+			</a>
+			<a class="tab-item" href="galeria.html" target="_self">
+			Gallery
+			</a>
+		</nav>
+	</div>
+  
+</body>
+</html>
 
- <form name="input" action="api/put" method="POST" enctype="multipart/form-data"> Select image: <input
- type="file" value ="None" name="image"><br>
-     Effects:<br>
-     <input type="radio" name="args" value="sepia" checked>Sepia<br>
-     <input type="radio" name="args" value="lomography">Lomography<br><br>
-     <input type="Radio" name="type" value="EFFECT" checked>Effect<br>
-	 <input type="radio" name="type" value="MEME">Meme (overrides other changes)<br>
-     <input type="radio" name="type" value="PHOTO">No Effect (Overrides any changes)<br>
-	 <input type="radio" name="args" value="add_text!,!True!,!TesteA!,!TesteB"><br>
- <input type="submit" value="Submit"><br>
-  </form>
-
-</HTML>

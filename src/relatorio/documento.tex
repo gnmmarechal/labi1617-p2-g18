@@ -108,9 +108,21 @@ O grupo optou por utilizar Python 3 como linguagem de programação principal us
 
 \section{Página Web}
 
+O objetivo do grupo era apresentar uma página simples e fácil de usar, usando o módulo Ratchet para compatibilidade móvel. Existiram protótipos em que devido a problemas de compatibilidade não foram implementados. Um exemplo seria a implementação de código javascript que mostrava alterações na imagem em "direto" à medida que o utilizador alterava os efeitos ou texto. 
+
+Esta funcionalidade não foi implementada devido aos recursos utilizados no dispositivo tal como no servidor provocando grande lentidão.
+\begin{figure}[h]
+ \center
+ \includegraphics[scale=0.5]{prototype.png}
+ \caption{Protótipo da Página(Computador)}
+ \label{ProtPag}
+\end{figure}
+
+
 
 \subsection{Página Inicial}
 
+A página inicial tem carácter simples e de uso fácil. O utilizador pode selecionar uma imagem a qual é apresentada na própria página, e escolher os efeitos, ou o gerador de meme onde aplica texto e/ou um fundo à imagem. A letra da imagem ainda pode ser sombreada.
 
 \subsection{Submissão de Imagem}
 
@@ -118,13 +130,18 @@ A submissão de imagens é feita através de um método /api/put, o qual usa um 
 
 \subsection{Galeria}
 
+A página da galeria é apresentada de forma simples, também permite o utilizador realizar votos nas imagens como consultar os mesmos. A apresentação da galeria de imagens usa o método /api/listAll onde é fornecida uma lista com todas imagens dos grupos, votos e autor. Os votos são realizados através de /api/vote onde são enviados o identificador da fotografia, do utilizador e o tipo de voto.
+
 \section{Núcleo da Aplicação}
 
 \subsection{Efeitos}
 
+Para a realização dos efeitos foi utilizado Python3 e o módulo Pillow.
+Os efeitos disponíveis no programa são: \textit{blur}, escala de cinzentos, \textit{lomography}, sepia e invesão de cor. Para a realização dos dois primeiros a imagem é processada com desfocagem e alterado o modo da imagem. Para os outros efeitos são aplicadas fórmulas matemáticas aos canais Vermelho, Verde e Azul para fazer modificações pixel a pixel à imagem.
+
 \subsection{Gerador de Memes}
 
-\subsection{Utilização de API}
+Este módulo permite aplicar texto à imagem tanto na parte inferior como superior, sombreado ou não. Também tem como objetivo recortar uma cara da imagem e por sobre um fundo branco ou colorido, à escolha do utilizador. No entanto, este módulo causou algum transtorno vistos que não foi possível existir uma forma correta de recortar uma cara de uma imagem.
 
 \subsection{Persistência}
 
@@ -141,7 +158,11 @@ A submissão de imagens é feita através de um método /api/put, o qual usa um 
 \chapter{Conclusões}
 \label{chap.conc}
 
+\chapter*{Contribuições dos autores}
 
+ML trabalhou maioritariamente na backend da aplicação, realizando o servidor e a base dados tal como a adaptação dos efeitos ao servidor.
+
+JO trabalhou maioritariamente na frontend da aplicação, dando a face ao programa nas páginas web, tal como o gerador de meme com seus efeitos.
 
 \chapter*{Acrónimos}
 \begin{acronym}
