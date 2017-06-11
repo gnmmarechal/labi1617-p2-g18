@@ -5,9 +5,9 @@ import sqlite3 as sql
 import time
 from PIL import Image
 import effects
-from effects import *
-from meme import *
+import meme
 import os
+import glob
 from misc_module import remove_extension as rem_ext
 
 
@@ -39,19 +39,22 @@ class AppAPI(object):
     def __init__(self):
         pass
 
+    def rm_all(self, path):
+        r = glob.glob(path)
+        for i in r:
+            os.remove(i)
+
     def get_username(self):
         if This.xcoa:
             return cherrypy.request.headers.get("X-Remote-User")
-        return "test"
+        return "tesst"
 
     def get_img_id(self):
-        return "test"
+        return "teast"
 
-    def db(self, database_path, sql_commands):
+    def db(self, database, sql_commands):
         try:
-            database = sql.connect(database_path)
             result = database.execute(sql_commands)
-            database.close()
             return result
         except Exception as e:
             print("ERROR: " + str(e))
@@ -70,7 +73,9 @@ class AppAPI(object):
     def clean(self):
         if This.debug:
             os.remove("proj2.db")
-
+            self.rm_all("temp/*")
+            self.rm_all("temp2/*")
+            self.rm_all("uploads/*")
             return "Cleaned"
         else:
             return "Not in debug mode."
@@ -86,6 +91,10 @@ class AppAPI(object):
 
     @cherrypy.expose
     def list(self):
+        return "[]"
+
+    @cherrypy.expose
+    def get(self, id):
         return "[]"
 
     @cherrypy.expose
@@ -120,7 +129,7 @@ class AppAPI(object):
             return -1
         image_id = self.get_img_id()
         author = self.get_username()
-        timestamp = time.time()
+        timestamp = int(time.time())
         fo = open("temp/" + image.filename, "wb")
         while True:
             data = image.file.read(8192)
@@ -132,18 +141,47 @@ class AppAPI(object):
         #res = effects.effect_image("temp/" + image.filename, method)
         #return
         im = Image.open("temp/" + image.filename)
-        im.save("uploads/" + image_id + ".png")
+        im.save("temp2/" + str(image_id) + ".png")
         os.remove("temp/" + image.filename)
+        #sql_query2 = "INSERT INTO images VALUES ("str(image_id) + "\", \"" + str(type) + "\", \"" + str(author) + "\", " + str(timestamp) + "," + str(0) + "," + str(0) + ");"
+        # Database stuff
+        conn = sql.connect("proj2.db")
+        c = conn.cursor()
+        c.execute("""CREATE TABLE IF NOT EXISTS images (id TEXT, type TEXT, author TEXT, timestamp INTEGER, upvotes INTEGER, downvotes INTEGER);""")
+        c.execute("""INSERT INTO images VALUES ("%s", "%s", "%s", %s, 0, 0);""" % (str(image_id), str(type), str(author), str(timestamp)))
+        conn.commit()
+        c.execute("""SELECT * FROM images""")
+        a = 0
+        r = [None] * 10
+        for row in c:
+            r[a] = str(row)
+            a += 1
+        c.close()
+        return r[0]
 
-        #self.db(This.Database.path, "CREATE TABLE IF NOT EXISTS images (id TEXT, type TEXT, author TEXT, timestamp INTEGER, upvotes INTEGER, downvotes INTEGER")
-        #self.db(This.Database.path, "INSERT INTO images VALUES (" + str(image_id) + ", " + str(type) + ", " + str(author) + ", " + str(timestamp) + ")")
+
+
+
         arg_complete = args.split("&,&")
         for arg in arg_complete:
             am = arg.split("!,!")
             ef_name = am[0]
             if type == "EFFECT":
                 method = getattr(effects, ef_name)
-                effects.effect_image("uploads/" + str(image_id) + ".png", method)
+                effects.effect_image("temp2/" + str(image_id) + ".png", method)
+            elif type == "MEME":
+                if am[0] == "add_text":
+                    if am[1] == "True":
+                        am[1] = True
+                    elif am[1] == "False":
+                        am[1] = False
+                method = getattr(meme, ef_name)
+
+                meme.meme_image("temp2/" + str(image_id) + ".png", method, tuple(am[1:]))
+
+        Image.open("temp2/" + str(image_id) + ".png").save("uploads/" + str(image_id) + ".png")
+        os.remove("temp2/" + str(image_id) + ".png")
+        return self.get(image_id)
 
 
 
