@@ -24,29 +24,30 @@ def add_text(im, args):
     if len(args) == 3:
         text_up = args[2].upper()
     draw = ImageDraw.Draw(im)
-    font = ImageFont.truetype("impact.ttf", 30)
-    w, h = draw.textsize(text, font=font)
-    wu, hu = draw.textsize(text_up, font=font)
+    fontdw = ImageFont.truetype("impact.ttf", 30)
+    fontup = ImageFont.truetype("impact.ttf", 40)
+    w, h = draw.textsize(text, font=fontdw)
+    wu, hu = draw.textsize(text_up, font=fontup)
     iw, ih = im.size
 
     # Bottom Text
     if outline:
-        draw.multiline_text(((iw-w)/2-1, ih*0.8-1), text, (0, 0, 0), font=font)
-        draw.multiline_text(((iw-w)/2+1, ih*0.8-1), text, (0, 0, 0), font=font)
-        draw.multiline_text(((iw-w)/2-1, ih*0.8+1), text, (0, 0, 0), font=font)
-        draw.multiline_text(((iw-w)/2+1, ih*0.8+1), text, (0, 0, 0), font=font)
+        draw.multiline_text(((iw-w)/2-1, ih*0.8-1), text, (0, 0, 0), font=fontdw, align = "center")
+        draw.multiline_text(((iw-w)/2+1, ih*0.8-1), text, (0, 0, 0), font=fontdw, align = "center")
+        draw.multiline_text(((iw-w)/2-1, ih*0.8+1), text, (0, 0, 0), font=fontdw, align = "center")
+        draw.multiline_text(((iw-w)/2+1, ih*0.8+1), text, (0, 0, 0), font=fontdw, align = "center")
 
-    draw.multiline_text(((iw-w)/2, ih*0.8), text, (255, 255, 255), font=font)
+    draw.multiline_text(((iw-w)/2, ih*0.8), text, (255, 255, 255), font=fontdw, align = "center")
 
     # Top Text
     if len(args) == 3:
         if outline:
-            draw.multiline_text(((iw-wu)/2-1, hu-1), text_up, (0, 0, 0), font=font)
-            draw.multiline_text(((iw-wu)/2+1, hu-1), text_up, (0, 0, 0), font=font)
-            draw.multiline_text(((iw-wu)/2-1, hu+1), text_up, (0, 0, 0), font=font)
-            draw.multiline_text(((iw-wu)/2+1, hu+1), text_up, (0, 0, 0), font=font)
+            draw.multiline_text(((iw-wu)/2-1, -1), text_up, (0, 0, 0), font=fontup, align = "center")
+            draw.multiline_text(((iw-wu)/2+1, -1), text_up, (0, 0, 0), font=fontup, align = "center")
+            draw.multiline_text(((iw-wu)/2-1, +1), text_up, (0, 0, 0), font=fontup, align = "center")
+            draw.multiline_text(((iw-wu)/2+1, +1), text_up, (0, 0, 0), font=fontup, align = "center")
 
-        draw.multiline_text(((iw-wu)/2, hu), text_up, (255, 255, 255), font=font)
+        draw.multiline_text(((iw-wu)/2, 0), text_up, (255, 255, 255), font=fontup, align = "center")
 
     return im
 
