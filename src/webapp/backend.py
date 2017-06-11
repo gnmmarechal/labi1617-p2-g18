@@ -50,7 +50,7 @@ class AppAPI(object):
         cherrypy.response.headers['Content-Type'] = 'text/html'
         if This.xcoa:
             return cherrypy.request.headers.get("X-Remote-User")
-        return "teste@localpc.com"
+        return "random-%s@localpc.com" % ''.join(choice(ascii_lowercase) for i in range(5))
 
     def get_img_id(self):
         cherrypy.response.headers['Content-Type'] = 'text/html'
@@ -135,8 +135,24 @@ class AppAPI(object):
     @cherrypy.expose
     def list(self):
         cherrypy.response.headers['Content-Type'] = 'text/html'
-
-        return "[]"
+        conn = sql.connect("proj2.db")
+        c = conn.cursor()
+        c.execute("""CREATE TABLE IF NOT EXISTS votes ( collective_id TEXT); """)
+        c.execute("""CREATE TABLE IF NOT EXISTS images (id TEXT PRIMARY KEY, type TEXT, author TEXT, timestamp INTEGER, upvotes INTEGER, downvotes INTEGER);""")
+        c.execute("""SELECT * FROM images;""")
+        conn.commit()
+        json_as_dict = []
+        for row in c:
+            json_elem_as_dict = {
+                "id": row[0],
+                "votes_up": row[4],
+                "votes_down": row[5],
+                "category": row[1],
+                "author": row[2]
+            }
+            json_as_dict.append(json_elem_as_dict)
+        c.close()
+        return json.dumps(json_as_dict)
 
     @cherrypy.expose
     def get(self, id="teast"):
@@ -174,7 +190,7 @@ class AppAPI(object):
             except Exception as e:
                 print("URL: " + server + " PORT:" + og_port + "ERROR: " + str(e))
         if not This.xcoa:  # If the computer is not xcoa, obtain the information for it and add it to the dictionary.
-            dict_response[str(This.port)] = str(list())
+            dict_response[str(This.port)] = str(self.list())
 
         return json.dumps(dict_response)
 
